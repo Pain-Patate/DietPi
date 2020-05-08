@@ -243,6 +243,7 @@ Package: wireguard wireguard-dkms wireguard-tools\nPin: release n=bullseye\nPin-
 	fi
 	#-------------------------------------------------------------------------------
 	# Finished
+	bash # DEBUG open subshell
 	exit 0
 	#-------------------------------------------------------------------------------
 }
