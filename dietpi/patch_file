@@ -16,6 +16,8 @@
 	# - /boot/dietpi/patch_file [$G_DIETPI_VERSION_SUB]
 	#////////////////////////////////////
 
+	bash # DEBUG open subshell
+
 	# Pre-v6.22: Update Git owner due to official lead transfer from Fourdee to MichaIng: https://github.com/MichaIng/DietPi/issues/2589
 	grep -q '^[[:blank:]]*DEV_GITOWNER=Fourdee' /boot/dietpi.txt && sed -i '/^[[:blank:]]*DEV_GITOWNER=/c\DEV_GITOWNER=MichaIng' /boot/dietpi.txt
 
@@ -73,20 +75,26 @@
 	# Pre-v6.29: DietPi-RAMdisk removal needs to be done before loading DietPi-Globals, else /boot/dietpi still contains the old code
 	if [[ -d '/DietPi' && $(readlink -f '/DietPi') != '/boot' ]]; then
 
+		bash # DEBUG open subshell
+
 		# Copy new code to disk
-		cp -Rf /DietPi/* /boot/
+		cp -vRf /DietPi/* /boot/
+
+		bash # DEBUG open subshell
 
 		# Disable and remove service and mount
 		systemctl disable dietpi-ramdisk
 		umount -Rl /DietPi
 		sed -i '/[[:blank:]]\/DietPi[[:blank:]]/d' /etc/fstab
-		rm -Rf /DietPi /boot/dietpi/{,func/}dietpi-ramdisk /etc/systemd/system/dietpi-ramdisk.service
+		rm -vRf /DietPi /boot/dietpi/{,func/}dietpi-ramdisk /etc/systemd/system/dietpi-ramdisk.service
 
 		# Create symlink for backwards compatibility
 		ln -s /boot /DietPi
 
 		# Failsafe
 		sync
+
+		bash # DEBUG open subshell
 
 		# DietPi-Update restart required since old version calls DietPi-RAMdisk forcefully and error-handled
 		RESTART=1
@@ -136,6 +144,8 @@ _EOF_
 	G_PROGRAM_NAME='DietPi-Patch'
 	G_INIT
 	# Import DietPi-Globals --------------------------------------------------------------
+
+	bash # DEBUG open subshell
 
 	# Grab input, if given, else fallback to dietpi-globals estimation
 	# - DietPi-Update includes G_VERSIONDB_SAVE after every subversion patch from v6.27 on.
@@ -197,6 +207,8 @@ _EOF_
 		sync
 		sleep 3
 
+		bash # DEBUG open subshell
+
 		# Apply update forcefully, since user has already chosen to do so
 		/boot/dietpi/dietpi-update 1
 
@@ -215,6 +227,8 @@ _EOF_
 		fi
 
 	fi
+
+	bash # DEBUG open subshell
 
 	#/////////////////////////////////////////////////////////////////////////////////////
 	# Incremental patch system
